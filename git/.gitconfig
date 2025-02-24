@@ -1,0 +1,16 @@
+[user]
+	name = zhiqiangz
+	email = hyw511322@gmail.com
+[core]
+	editor = vim
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential]
+	helper = store
+[init]
+	defaultBranch = main
+[color]
+	ui = true

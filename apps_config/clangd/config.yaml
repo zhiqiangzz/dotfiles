@@ -1,0 +1,10 @@
+CompileFlags:
+  Add:     # additional parameter needed to add to clang 
+    - --no-cuda-version-check
+  Remove:  # remove nvcc parameter that can't be recognized by clang
+    - -forward-unknown-to-host-compiler
+    - -G
+    - --expt-*
+    - --generate-code=*
+    - -arch=*
+    - -rdc=*

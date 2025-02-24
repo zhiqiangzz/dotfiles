@@ -1,0 +1,32 @@
+# install.conf.yaml
+- defaults:
+    link:
+      relink: true
+
+- clean: ['~']
+
+- link:
+    # Shell stuff
+    ~/.aliases: shell/.aliases.sh
+    ~/.functions: shell/.functions.sh
+    ~/.env_init: shell/.env_init.sh
+    ~/.zshrc: shell/.zshrc
+    ~/.zprofile: shell/.zprofile
+    ~/.zshenv: shell/.zshenv
+    # Git
+    ~/.gitconfig: git/.gitconfig
+    ~/.gitignore: git/.gitignore_global
+    ~/.git-credentials: git/.git-credentials
+    # Apps
+    ~/.config/clangd: apps_config/clangd
+    ~/.config/nvim: apps_config/nvim
+    ~/.config/wezterm: apps_config/wezterm
+    ~/.config/yazi: apps_config/yazi
+    ~/.config/zim/conf: apps_config/zim
+
+    ~/.vimrc: apps_config/.vimrc
+    ~/.vscvimrc: apps_config/.vscvimrc
+    ~/.tmux.conf: apps_config/.tmux.conf
+
+- shell:
+  - [git submodule update --init --recursive, Installing submodules]
