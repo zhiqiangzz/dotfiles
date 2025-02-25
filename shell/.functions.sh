@@ -126,3 +126,9 @@ function decompress() {
     ;;
   esac
 }
+
+function inheritEnv(){
+    sudo cat /proc/1/environ | tr '\0' '\n' \
+  | xargs -I {} bash -c 'v=$(echo "{}" | cut -d= -f1); [ -z "${!v}" ] && echo "export {}"; true' \
+  | source /dev/stdin
+}

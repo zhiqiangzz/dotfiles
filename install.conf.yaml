@@ -22,11 +22,11 @@
     ~/.config/nvim: apps_config/nvim
     ~/.config/wezterm: apps_config/wezterm
     ~/.config/yazi: apps_config/yazi
+    ~/.config/tmux: apps_config/tmux
     ~/.config/zim/conf: apps_config/zim
 
     ~/.vimrc: apps_config/.vimrc
     ~/.vscvimrc: apps_config/.vscvimrc
-    ~/.tmux.conf: apps_config/.tmux.conf
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]

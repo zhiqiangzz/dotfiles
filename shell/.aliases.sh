@@ -1,6 +1,8 @@
 # alias
 
 alias fd=fdfind
+alias cat="batcat -p"
+alias ls=eza
 alias clear="echo -e \"\033c\""
 
 alias ezsh="vim ~/.zshrc"
