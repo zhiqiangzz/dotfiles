@@ -16,7 +16,6 @@
     # Git
     ~/.gitconfig: git/.gitconfig
     ~/.gitignore: git/.gitignore_global
-    ~/.git-credentials: git/.git-credentials
     # Apps
     ~/.config/clangd: apps_config/clangd
     ~/.config/nvim: apps_config/nvim
