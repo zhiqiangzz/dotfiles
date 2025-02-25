@@ -15,7 +15,7 @@ reserve_file_sl="$config_home/conda_env_reservation.txt"
 if [ -f "$reserve_file" ]; then
     rm -f "$reserve_file_sl"
 fi
-ln -s "$reserve_file" "$reserve_file_sl"
+ln -sf "$reserve_file" "$reserve_file_sl"
 
 # Step 2: Parse each line that starts with "pane"
 grep "^pane" "$last_file" | while read -r line; do
