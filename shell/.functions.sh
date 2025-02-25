@@ -132,3 +132,13 @@ function inheritEnv(){
   | xargs -I {} bash -c 'v=$(echo "{}" | cut -d= -f1); [ -z "${!v}" ] && echo "export {}"; true' \
   | source /dev/stdin
 }
+
+function proxy(){
+  export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+  export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+  export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
+}
+
+function unproxy(){
+  unset all_proxy http_proxy https_proxy
+}

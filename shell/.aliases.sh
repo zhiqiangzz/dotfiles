@@ -16,5 +16,4 @@ Linux)
 esac
 
 alias ippublic='curl ipinfo.io'
-alias proxy='export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890'
-alias unproxy='unset all_proxy http_proxy https_proxy'
+
