@@ -13,6 +13,7 @@
     ~/.zshrc: shell/.zshrc
     ~/.zprofile: shell/.zprofile
     ~/.zshenv: shell/.zshenv
+    ~/.zimrc: shell/.zimrc
     # Git
     ~/.gitconfig: git/.gitconfig
     ~/.gitignore: git/.gitignore_global

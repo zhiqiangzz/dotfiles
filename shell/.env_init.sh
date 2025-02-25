@@ -7,8 +7,8 @@ export PATH=$PATH:~/.local/bin
 export HF_ENDPOINT=https://hf-mirror.com
 
 # zim
-export ZIM_HOME=$HOME/.config/zim/.zim
-export ZDOTDIR=$HOME/.config/zim/conf
+# export ZIM_HOME=$HOME/.config/zim/.zim
+# export ZDOTDIR=$HOME
 source $HOME/.config/zim/conf/setup_zim.zsh
 
 # c/cpp tool chain

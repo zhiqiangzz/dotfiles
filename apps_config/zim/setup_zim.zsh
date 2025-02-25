@@ -93,9 +93,7 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 # Initialize modules
 # ------------------
 
-zstyle ':zim:completion' dumpfile "$HOME/.zcompdump"
-
-# ZIM_HOME=${ZDOTDIR:-${HOME}}/.config/zim/.zim
+ZIM_HOME=${ZDOTDIR:-${HOME}}/.config/zim/.zim
 # Download zimfw plugin manager if missing.
 if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
   if (( ${+commands[curl]} )); then
