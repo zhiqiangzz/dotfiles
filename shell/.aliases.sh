@@ -7,8 +7,9 @@ alias ezsh="vim ~/.zshrc"
 alias szsh="source ~/.zshrc"
 
 case $(uname) in
-Darwin) ;;
+Darwin) 
   alias cat="bat -p"
+  ;;
 Linux)
   alias fd=fdfind
   alias iplocal="ifconfig enp5s0 | rg 'inet ' | awk '{ print \$2 }'"

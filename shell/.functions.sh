@@ -10,7 +10,7 @@ Darwin)
     cat $1 | pbcopy
   }
   ;;
-Linux)
+Linux) ;;
 esac
 
 # llvm related func
@@ -41,11 +41,7 @@ function genllrv32() {
 # vscode
 function killvscode() {
   case $(uname) in
-  Darwin) 
-    function cbtxtfile(){
-      cat $1 | pbcopy
-    }
-    ;;
+  Darwin) ;;
   Linux)
     ps aux | grep .vscode-server | awk '{print $2}' | xargs kill
     ;;
@@ -169,18 +165,28 @@ function decompress() {
   esac
 }
 
-function inheritEnv(){
+function inheritEnv() {
     sudo cat /proc/1/environ | tr '\0' '\n' \
   | xargs -I {} bash -c 'v=$(echo "{}" | cut -d= -f1); [ -z "${!v}" ] && echo "export {}"; true' \
   | source /dev/stdin
 }
 
-function proxy(){
-  export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
-  export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
-  export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
+# proxy
+function proxy() {
+  case $(hostname) in
+  HX62KC67RM) ;;
+  *)
+    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+    export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+    export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
+    ;;
+  esac
 }
 
-function unproxy(){
+function unproxy() {
   unset all_proxy http_proxy https_proxy
+}
+
+function ippublic() {
+  curl ipinfo.io
 }

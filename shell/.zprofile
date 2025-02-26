@@ -8,3 +8,10 @@ ryukk-ubuntu101)
   ;;
 *) ;;
 esac
+
+case $(uname) in
+Linux) ;;
+Darwin) 
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+;;
+esac
