@@ -38,8 +38,8 @@ Darwin)
   ;;
 Linux)
   # cuda toolkit
-  export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
-  export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+  export PATH=/usr/local/cuda-12/bin${PATH:+:${PATH}}
+  export LD_LIBRARY_PATH=/usr/local/cuda-12/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
   # java toolkit
   export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
