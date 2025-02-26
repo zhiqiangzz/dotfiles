@@ -174,12 +174,12 @@ function inheritEnv() {
 # proxy
 function proxy() {
   case $(hostname) in
-  HX62KC67RM) ;;
-  *)
+  ryukk-ubuntu101)
     export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
     export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
     export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
     ;;
+  HX62KC67RM) ;;
   esac
 }
 
