@@ -23,6 +23,7 @@
     ~/.config/wezterm: apps_config/wezterm
     ~/.config/yazi: apps_config/yazi
     ~/.config/tmux: apps_config/tmux
+    ~/.tmux.conf: apps_config/tmux/.tmux.conf
     ~/.config/zim/conf: apps_config/zim
 
     ~/.vimrc: apps_config/.vimrc
