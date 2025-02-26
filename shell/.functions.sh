@@ -1,9 +1,51 @@
 # efficient scrpit
 
+case $(uname) in
+Darwin) 
+  function cbpwd(){
+    local current_dir=$(pwd | sed "s|$HOME|~|g")
+    echo $current_dir | pbcopy
+  }
+  function cbtxtfile() {
+    cat $1 | pbcopy
+  }
+  ;;
+Linux)
+esac
+
+# llvm related func
+function llvm-conf() {
+  llvm-config --cxxflags --ldflags --system-libs --libs core
+}
+
+function genllrv() {
+  input_file=$1
+  output_file_ll="${1%.*}.ll"
+  output_file_s="${1%.*}.s"
+
+  clang++ $input_file --target=riscv64-unknown-elf -march=rv64g -emit-llvm -S -O0 \
+  -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
+  opt $output_file_ll -p=mem2reg -S -o $output_file_ll
+}
+
+function genllrv32() {
+  input_file=$1
+  output_file_ll="${1%.*}.ll"
+  output_file_s="${1%.*}.s"
+
+  clang++ $input_file --target=riscv32-unknown-elf -march=rv32i -emit-llvm -S -O0 \
+  -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
+  opt $output_file_ll -p=mem2reg -S -o $output_file_ll
+}
+
 # vscode
 function killvscode() {
   case $(uname) in
-  Darwin) ;;
+  Darwin) 
+    function cbtxtfile(){
+      cat $1 | pbcopy
+    }
+    ;;
   Linux)
     ps aux | grep .vscode-server | awk '{print $2}' | xargs kill
     ;;

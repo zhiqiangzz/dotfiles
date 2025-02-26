@@ -15,13 +15,28 @@ source $HOME/.config/zim/conf/setup_zim.zsh
 # export CXXFLAGS="-stdlib=libc++"
 # export LDFLAGS="-stdlib=libc++"
 
-case $(uname) in
-Darwin) ;;
-Linux)
-  # locale
-  export LANGUAGE=en_US.UTF-8
-  export LC_ALL=en_US.UTF-8
+# locale
+export LANGUAGE=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
+case $(uname) in
+Darwin) 
+  # zsh
+  unsetopt hist_expand
+  unsetopt hist_verify
+  setopt no_nomatch
+
+  # fzf
+  export FZF_CTRL_R_OPTS="--height 40% --reverse --border --preview 'echo {}' --preview-window=up:3:wrap"
+
+  # homebrew
+  export HOMEBREW_NO_AUTO_UPDATE=1
+  export HOMEBREW_NO_ENV_HINTS=1
+
+  # vscode
+  export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  ;;
+Linux)
   # cuda toolkit
   export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
   export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
