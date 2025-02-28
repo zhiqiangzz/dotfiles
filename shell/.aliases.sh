@@ -9,6 +9,7 @@ alias szsh="source ~/.zshrc"
 case $(uname) in
 Darwin) 
   alias cat="bat -p"
+  alias iplocal="ipconfig getifaddr en0"
   ;;
 Linux)
   alias fd=fdfind
