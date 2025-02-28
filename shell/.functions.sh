@@ -174,12 +174,13 @@ function inheritEnv() {
 # proxy
 function proxy() {
   case $(hostname) in
-  ryukk-ubuntu101)
+  ryukk-ubuntu101|"zhiqiangzs-MacBook-Pro.local")
     export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
     export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
     export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
     ;;
   *) 
+    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
     export https_proxy=$http_proxy_server
     export http_proxy=$http_proxy_server
     export all_proxy=$all_proxy_server
