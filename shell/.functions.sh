@@ -106,7 +106,7 @@ function compress_zip() {
   fi
 
   file="$1"
-  zip -r $file.zip $file
+  zip -r $file.zip $file -x "$file/build/*" "$file/third_party/*" "$file/.cache/*"
 }
 
 function compress_targz() {
