@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse
 import re
 
@@ -19,7 +20,7 @@ def split_and_filter_file(input_file, output_file):
             current_block = [line]
             exclude_block = False  # Reset flag for new block
             if re.search(
-                r"canonicalize|cse|simplify|optimize-int-arithmetic|dce|fold",
+                r"canonicalize|cse|simplify|optimize-int-arithmetic|dce|fold|inline",
                 match.group(1),
                 re.IGNORECASE,
             ):

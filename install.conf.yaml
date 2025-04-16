@@ -25,6 +25,8 @@
     ~/.config/tmux: apps_config/tmux
     ~/.tmux.conf: apps_config/tmux/.tmux.conf
     ~/.config/zim/conf: apps_config/zim
+    # Scripts
+    ~/scripts: scripts/
 
     ~/.vimrc: apps_config/.vimrc
     ~/.vscvimrc: apps_config/.vscvimrc

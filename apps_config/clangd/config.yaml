@@ -8,3 +8,4 @@ CompileFlags:
     - --generate-code=*
     - -arch=*
     - -rdc=*
+    - -Xcompiler=*

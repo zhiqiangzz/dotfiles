@@ -2,6 +2,7 @@
 
 # local bin
 export PATH=$PATH:~/.local/bin
+export PATH=$PATH:~/scripts/py_scripts
 
 # hugging face china mirror
 export HF_ENDPOINT=https://hf-mirror.com
