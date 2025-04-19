@@ -9,9 +9,14 @@ def find_compile_commands(root_dir="."):
     for root, _, files in os.walk(root_dir):
         build_dir = Path(root) / "build"
         if build_dir.is_dir():
-            json_file = build_dir / "compile_commands.json"
-            if json_file.exists():
-                matches.append(json_file)
+            for candidate in [
+                build_dir / "Debug" / "compile_commands.json",
+                build_dir / "Release" / "compile_commands.json",
+                build_dir / "compile_commands.json"
+            ]:
+                if candidate.exists():
+                    matches.append(candidate)
+
     return matches
 
 def merge_commands(input_files, output_file="compile_commands.json"):
