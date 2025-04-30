@@ -1,8 +1,8 @@
 # efficient scrpit
 
 case $(uname) in
-Darwin) 
-  function cbpwd(){
+Darwin)
+  function cbpwd() {
     local current_dir=$(pwd | sed "s|$HOME|~|g")
     echo $current_dir | pbcopy
   }
@@ -24,7 +24,7 @@ function genllrv() {
   output_file_s="${1%.*}.s"
 
   clang++ $input_file --target=riscv64-unknown-elf -march=rv64g -emit-llvm -S -O0 \
-  -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
+    -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
   opt $output_file_ll -p=mem2reg -S -o $output_file_ll
 }
 
@@ -34,7 +34,7 @@ function genllrv32() {
   output_file_s="${1%.*}.s"
 
   clang++ $input_file --target=riscv32-unknown-elf -march=rv32i -emit-llvm -S -O0 \
-  -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
+    -fno-discard-value-names -Xclang -disable-O0-optnone -o $output_file_ll
   opt $output_file_ll -p=mem2reg -S -o $output_file_ll
 }
 
@@ -86,6 +86,26 @@ function jqq() {
   mv $1 $unformat
   jq . $unformat >$1 2>&1
   rm -f $unformat
+}
+
+# format c/cpp/h/cc/hpp/cu file
+function cformat() {
+  if ! command -v clang-format >/dev/null 2>&1; then
+    echo "clang-format not found in PATH"
+    return 1
+  fi
+
+  echo "The following files will be formatted:"
+  fd --type f --extension c --extension cpp --extension h --extension cc --extension hpp --extension cu
+  echo -n "Are you sure you want to format these files? (yes/y to confirm): "
+  read -r answer
+
+  if [[ "$answer" =~ ^[Yy](es)?$ ]]; then
+    fd --type f --extension c --extension cpp --extension h --extension cc --extension hpp --extension cu --exec clang-format -i
+    echo "clang-format applied to c/cpp/h/cc/hpp/cu files successfully"
+  else
+    echo "Formatting cancelled"
+  fi
 }
 
 # compress and decompress
@@ -166,21 +186,21 @@ function decompress() {
 }
 
 function inheritEnv() {
-    sudo cat /proc/1/environ | tr '\0' '\n' \
-  | xargs -I {} bash -c 'v=$(echo "{}" | cut -d= -f1); [ -z "${!v}" ] && echo "export {}"; true' \
-  | source /dev/stdin
+  sudo cat /proc/1/environ | tr '\0' '\n' |
+    xargs -I {} bash -c 'v=$(echo "{}" | cut -d= -f1); [ -z "${!v}" ] && echo "export {}"; true' |
+    source /dev/stdin
 }
 
 # proxy
 function proxy() {
   case $(hostname) in
-  ryukk-ubuntu101|"zhiqiangzs-MacBook-Pro.local")
-    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
-    export http_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+  ryukk-ubuntu101 | "zhiqiangzs-MacBook-Pro.local")
+    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890}
+    export http_proxy=${http_proxy_server:-http://127.0.0.1:7890}
     export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
     ;;
-  *) 
-    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890} 
+  *)
+    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890}
     export https_proxy=$http_proxy_server
     export http_proxy=$http_proxy_server
     export all_proxy=$all_proxy_server
