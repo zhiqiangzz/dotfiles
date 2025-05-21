@@ -11,5 +11,3 @@ source ~/.aliases
 # [[ ! -f $HOST_SPECIAL ]] || source $HOST_SPECIAL
 
 proxy
-
-

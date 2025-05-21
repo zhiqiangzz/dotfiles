@@ -11,7 +11,7 @@ esac
 
 case $(uname) in
 Linux) ;;
-Darwin) 
+Darwin)
   eval "$(/opt/homebrew/bin/brew shellenv)"
-;;
+  ;;
 esac

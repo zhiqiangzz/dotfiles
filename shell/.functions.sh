@@ -88,6 +88,26 @@ function jqq() {
   rm -f $unformat
 }
 
+# format sh file by shfmt
+function shformat() {
+  if ! command -v shfmt >/dev/null 2>&1; then
+    echo "shfmt not found in PATH"
+    return 1
+  fi
+
+  echo "The following files will be formatted:"
+  fd -H --type f --regex '(\.sh$|\.zshrc$|\.zshenv$|\.zprofile$)'
+  echo -n "Are you sure you want to format these files? (yes/y to confirm): "
+  read -r answer
+
+  if [[ "$answer" =~ ^[Yy](es)?$ ]]; then
+    fd -H --type f --regex '(\.sh$|\.zshrc$|\.zshenv$|\.zprofile$)' --exec shfmt -w -i 2
+    echo "'shfmt -w -i 2' applied to sh files successfully"
+  else
+    echo "Formatting cancelled"
+  fi
+}
+
 # format c/cpp/h/cc/hpp/cu file
 function cformat() {
   if ! command -v clang-format >/dev/null 2>&1; then
