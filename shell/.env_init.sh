@@ -48,8 +48,17 @@ Linux)
   ;;
 esac
 
+function init_if_exist() {
+  local exec_prog="$1"
+  local init_cmd="$2"
+
+  if command -v "$exec_prog" >/dev/null 2>&1; then
+    eval "$init_cmd"
+  fi
+}
+
 # fzf
-source <(fzf --zsh)
+init_if_exist fzf "source <(fzf --zsh)"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -76,8 +85,10 @@ if [[ -n "$TMUX" ]]; then
   source $HOME/.tmux/plugins/tmux-conda-inherit/conda-inherit.sh
 fi
 
-# zoxide
-eval "$(zoxide init --cmd cd zsh)"
+function zoxide_init_wrapper() {
+  eval "$(zoxide init --cmd cd zsh)"
+}
+init_if_exist zoxide zoxide_init_wrapper
 
 case $(hostname) in
 ryukk-ubuntu101)
