@@ -128,6 +128,19 @@ function cformat() {
   fi
 }
 
+function compress_prologue() {
+  input_path=$1
+  if [ -d "$input_path" ]; then
+    if git -C "$input_path" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      root_path=$(git -C "$input_path" rev-parse --show-toplevel)
+      files_to_compress=$(git -C $input_path ls-files --others --exclude-standard --cached |
+        grep -v "^$(git -C $input_path submodule--helper list | awk '{print $4}' |
+          paste -sd '|' -)$" | sed "s|^|$root_path/|")
+      echo "Compressing files in git repository: $files_to_compress"
+    fi
+  fi
+}
+
 # compress and decompress
 function compress7z() {
   if [ -z "$1" ]; then
@@ -213,19 +226,22 @@ function inheritEnv() {
 
 # proxy
 function proxy() {
-  case $(hostname) in
-  ryukk-ubuntu101 | "zhiqiangzs-MacBook-Pro.local")
-    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890}
-    export http_proxy=${http_proxy_server:-http://127.0.0.1:7890}
-    export all_proxy=${all_proxy_server:-socks5://127.0.0.1:7890}
-    ;;
-  *)
-    export https_proxy=${http_proxy_server:-http://127.0.0.1:7890}
-    export https_proxy=$http_proxy_server
-    export http_proxy=$http_proxy_server
-    export all_proxy=$all_proxy_server
-    ;;
-  esac
+  ip_country=$(curl -s ipinfo.io/$ip | grep country | awk -F'"' '{print $4}')
+  if [ "$ip_country" = "CN" ]; then
+    case "$(hostname)" in
+      ryukk-ubuntu101 | "zhiqiangzs-MacBook-Pro.local")
+        export https_proxy="${http_proxy_server:-http://127.0.0.1:7890}"
+        export http_proxy="${http_proxy_server:-http://127.0.0.1:7890}"
+        export all_proxy="${all_proxy_server:-socks5://127.0.0.1:7890}"
+        ;;
+      *)
+        ;;
+    esac
+  else
+    export https_proxy="$http_proxy_server"
+    export http_proxy="$http_proxy_server"
+    export all_proxy="$all_proxy_server"
+  fi
 }
 
 function unproxy() {

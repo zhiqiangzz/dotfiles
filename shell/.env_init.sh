@@ -35,12 +35,14 @@ Darwin)
   export HOMEBREW_NO_ENV_HINTS=1
 
   # vscode
-  export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  # export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  # cursor
+  export PATH="$PATH:/Applications/Cursor.app/Contents/Resources/app/bin"
   ;;
 Linux)
   # cuda toolkit
-  export PATH=/usr/local/cuda-12/bin${PATH:+:${PATH}}
-  export LD_LIBRARY_PATH=/usr/local/cuda-12/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+  export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}
+  export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
   # java toolkit
   export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
