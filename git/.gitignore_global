@@ -1,9 +1,13 @@
 # clangd cache
 **/.cache/**
 **/compile_commands.json
+**/.clangd
 
 # build cache
 **/build/**
+
+# MacOS
+**/.DS_Store
 
 # --- IDE Specific ---
 # Visual Studio Code

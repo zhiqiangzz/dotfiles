@@ -7,11 +7,7 @@
 
 - link:
     # Shell stuff
-    ~/.aliases: shell/.aliases.sh
-    ~/.functions: shell/.functions.sh
-    ~/.env_init: shell/.env_init.sh
     ~/.zshrc: shell/.zshrc
-    ~/.zprofile: shell/.zprofile
     ~/.zshenv: shell/.zshenv
     ~/.zimrc: shell/.zimrc
     # Git
