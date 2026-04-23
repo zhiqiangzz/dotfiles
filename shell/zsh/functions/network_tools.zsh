@@ -9,8 +9,12 @@ function _dotfiles_ip_country() {
   now="$(date +%s 2>/dev/null)"
   if [[ -f "$cache_file" ]]; then
     local mtime
-    mtime="$(stat -f %m "$cache_file" 2>/dev/null || stat -c %Y "$cache_file" 2>/dev/null)"
-    if [[ -n "$mtime" && -n "$now" ]] && ((now - mtime < 86400)); then
+    if [[ "$DOTFILES_OS" == "Darwin" ]]; then
+      mtime="$(stat -f %m "$cache_file" 2>/dev/null)"
+    else
+      mtime="$(stat -c %Y "$cache_file" 2>/dev/null)"
+    fi
+    if [[ "$mtime" =~ '^[0-9]+$' && "$now" =~ '^[0-9]+$' ]] && ((now - mtime < 86400)); then
       cached="$(<"$cache_file")"
       if [[ -n "$cached" ]]; then
         printf '%s' "$cached"
@@ -18,7 +22,10 @@ function _dotfiles_ip_country() {
       fi
     fi
   fi
-  mkdir -p "$cache_dir" 2>/dev/null
+  if [[ -e "$cache_dir" && ! -d "$cache_dir" ]]; then
+    return 1
+  fi
+  mkdir -p "$cache_dir" 2>/dev/null || return 1
   local country
   country="$(curl -fsS --max-time 2 https://ipinfo.io/country 2>/dev/null | tr -d '[:space:]')"
   if [[ -n "$country" ]]; then
