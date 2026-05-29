@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
-function get_conda_env() {
-  echo -n "$CONDA_DEFAULT_ENV"
-}
+# function get_conda_env() {
+#   echo -n "$CONDA_DEFAULT_ENV"
+# }
 
 function kill_vscode() {
   case "$DOTFILES_OS" in

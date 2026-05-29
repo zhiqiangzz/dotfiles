@@ -38,29 +38,34 @@ function _dotfiles_ip_country() {
 
 function proxy() {
   require_cmds curl || return 1
-  local ip_country
+
+  local ip_country http_proxy_val all_proxy_val
   ip_country="$(_dotfiles_ip_country)"
 
   if [[ "$ip_country" == "CN" ]]; then
-    case "$DOTFILES_HOST" in
-    zhiqiangzs-MacBook-Pro)
-      export https_proxy="${http_proxy_server:-http://127.0.0.1:10808}"
-      export http_proxy="${http_proxy_server:-http://127.0.0.1:10808}"
-      export all_proxy="${all_proxy_server:-socks5://127.0.0.1:10808}"
-      export HTTPS_PROXY="${http_proxy_server:-http://127.0.0.1:10808}"
-      export HTTP_PROXY="${http_proxy_server:-http://127.0.0.1:10808}"
-      export ALL_PROXY="${all_proxy_server:-socks5://127.0.0.1:10808}"
-      ;;
-    *) ;;
-    esac
+    http_proxy_val="${http_proxy_server:-http://127.0.0.1:10808}"
   else
-    export https_proxy="$http_proxy_server"
-    export http_proxy="$http_proxy_server"
-    export all_proxy="$all_proxy_server"
-    export HTTPS_PROXY="$http_proxy_server"
-    export HTTP_PROXY="$http_proxy_server"
-    export ALL_PROXY="$all_proxy_server"
+    http_proxy_val="$http_proxy_server"
   fi
+
+  if [[ -z "$http_proxy_val" ]]; then
+    echo "[proxy] no proxy configured"
+    return 0
+  fi
+
+  if [[ -n "$all_proxy_server" ]]; then
+    all_proxy_val="$all_proxy_server"
+  else
+    all_proxy_val="${http_proxy_val/http:\/\//socks5://}"
+  fi
+
+  for var in http_proxy https_proxy HTTP_PROXY HTTPS_PROXY; do
+    export $var="$http_proxy_val"
+  done
+
+  for var in all_proxy ALL_PROXY; do
+    export $var="$all_proxy_val"
+  done
 }
 
 function unproxy() {
