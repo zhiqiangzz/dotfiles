@@ -16,10 +16,8 @@ set -gx DOTFILES_FISH_HOME "$DOTFILES_HOME/shell/fish"
 # DOTFILES_OS / DOTFILES_HOST globals that the rest of the config branches on.
 source "$DOTFILES_FISH_HOME/lib/guards.fish"
 
-# Environment / PATH: most-general to most-specific.
+# Environment / PATH. base.fish chains in the OS- and host-specific layers.
 source_if_file "$DOTFILES_FISH_HOME/env/base.fish"
-source_if_file "$DOTFILES_FISH_HOME/env/os/$DOTFILES_OS.fish"
-source_if_file "$DOTFILES_FISH_HOME/env/host/$DOTFILES_HOST.fish"
 
 # Interactive-only setup.
 if status is-interactive

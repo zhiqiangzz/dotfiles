@@ -47,6 +47,15 @@ function run_if_cmd
     end
 end
 
+# Source a POSIX/bash env file into fish via the `bass` plugin, but only when the
+# file exists and bass (plus its python3 dependency) is available. Silent no-op
+# otherwise. Use for sh-syntax env files that fish cannot source natively.
+function bass_source_if_file
+    test -f "$argv[1]"; or return
+    type -q bass; and type -q python3; or return
+    bass source "$argv[1]"
+end
+
 # Append directory to PATH if it exists (fish_add_path dedupes automatically).
 function path_append_if_dir
     test -d "$argv[1]"; and fish_add_path -ga "$argv[1]"
