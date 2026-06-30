@@ -14,5 +14,8 @@ esac
 
 export FZF_CTRL_R_OPTS="--height 40% --reverse --border --preview 'echo {}' --preview-window=up:3:wrap"
 
-run_if_cmd "zoxide" 'eval "$(zoxide init --cmd cd zsh)"'
 source_if_file "$HOME/.config/zim/conf/setup_zim.zsh"
+
+# zoxide must init last: its doctor warns unless __zoxide_hook is the final
+# precmd/chpwd hook, and Zim modules above register hooks of their own.
+run_if_cmd "zoxide" 'eval "$(zoxide init --cmd cd zsh)"'

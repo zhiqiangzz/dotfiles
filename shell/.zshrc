@@ -25,3 +25,5 @@ source_if_file "$DOTFILES_SHELL_HOME/functions/base.zsh"
 if [[ -n "$DOTFILES_PROFILE" ]]; then
   zprof
 fi
+
+proxy
