@@ -24,6 +24,7 @@ source_if_file "$DOTFILES_FISH_HOME/env/host/$DOTFILES_HOST.fish"
 # Interactive-only setup.
 if status is-interactive
     source_if_file "$DOTFILES_FISH_HOME/functions/proxy.fish"
+    source_if_file "$DOTFILES_FISH_HOME/functions/dotenv.fish"
     source_if_file "$DOTFILES_FISH_HOME/login/base.fish"
     source_if_file "$DOTFILES_FISH_HOME/interactive/base.fish"
     proxy
