@@ -14,7 +14,7 @@ path_append_if_dir "$HOME/.local/bin"
 # by fish; rustup also writes ~/.cargo/env.fish.
 source_if_file "$HOME/.cargo/env.fish"
 
-# The proxy server vars ($http_proxy_server / $all_proxy_server) historically
-# came from ~/set_proxy.sh, which is POSIX syntax and CANNOT be sourced by
-# fish. If you port it to fish, source it here so `proxy` can pick it up, e.g.:
-#   source_if_file "$HOME/set_proxy.fish"
+# Proxy server vars ($http_proxy_server / $all_proxy_server), read by `proxy`.
+# The original ~/set_proxy.sh is POSIX and cannot be sourced by fish; use the
+# fish port ~/set_proxy.fish instead (both files live outside this repo).
+source_if_file "$HOME/set_proxy.fish"
