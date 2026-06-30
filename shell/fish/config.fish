@@ -28,4 +28,7 @@ if status is-interactive
     source_if_file "$DOTFILES_FISH_HOME/login/base.fish"
     source_if_file "$DOTFILES_FISH_HOME/interactive/base.fish"
     proxy
+    # Load a .env in the directory the shell starts in (the PWD handler only
+    # fires on subsequent cd).
+    _dotenv_autoload
 end

@@ -38,3 +38,19 @@ function dotenv --description 'Load environment variables from a .env file'
 
     echo "dotenv: loaded $count var(s) from $file"
 end
+
+# Auto-load ./.env when entering a directory that contains one (a lightweight,
+# direnv-style hook). Unlike direnv it never executes shell code — it only sets
+# KEY=VALUE pairs — but be aware any directory's .env can still inject env vars
+# (e.g. PATH). Set `dotenv_autoload false` to disable. Loads once per directory
+# entry (guarded against firing on every prompt redraw / repeated cd).
+function _dotenv_autoload --on-variable PWD
+    status is-interactive; or return
+    test "$dotenv_autoload" = false; and return
+    test -f .env; or return
+
+    set -l stamp "$PWD/.env"
+    test "$stamp" = "$__dotenv_last_loaded"; and return
+    set -g __dotenv_last_loaded "$stamp"
+    dotenv .env
+end
