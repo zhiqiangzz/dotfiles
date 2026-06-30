@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+# Host-specific environment (port of zhiqiangzs-MacBook-Pro.zsh).
 
 path_append_if_dir "/Applications/Cursor.app/Contents/Resources/app/bin"
 path_prepend_if_dir "$HOME/.antigravity/antigravity/bin"

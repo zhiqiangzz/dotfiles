@@ -6,10 +6,9 @@
 - clean: ['~']
 
 - link:
-    # Shell stuff
-    ~/.zshrc: shell/.zshrc
-    ~/.zshenv: shell/.zshenv
-    ~/.zimrc: shell/.zimrc
+    # Shell stuff (fish)
+    ~/.config/fish/config.fish: shell/fish/config.fish
+    ~/.config/fish/fish_plugins: shell/fish/fish_plugins
     # Git
     ~/.gitconfig: git/.gitconfig
     ~/.gitignore: git/.gitignore_global
@@ -20,7 +19,6 @@
     ~/.config/yazi: apps_config/yazi
     ~/.config/tmux: apps_config/tmux
     ~/.tmux.conf: apps_config/tmux/.tmux.conf
-    ~/.config/zim/conf: apps_config/zim
     # Scripts
     ~/scripts: scripts/
 
