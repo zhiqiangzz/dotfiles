@@ -15,6 +15,10 @@ path_append_if_dir "$HOME/.local/bin"
 source_if_file "$HOME/.cargo/env.fish"
 
 # Proxy server vars ($http_proxy_server / $all_proxy_server), read by `proxy`.
-# The original ~/set_proxy.sh is POSIX and cannot be sourced by fish; use the
-# fish port ~/set_proxy.fish instead (both files live outside this repo).
-source_if_file "$HOME/set_proxy.fish"
+# ~/set_proxy.sh is POSIX; source it through the `bass` plugin (runs it in bash
+# and imports the resulting env into fish) so there's a single source of truth
+# and no separate fish port to maintain. Requires the bass plugin + python3;
+# skipped silently if either is unavailable (e.g. before fisher has bootstrapped).
+if test -f "$HOME/set_proxy.sh"; and type -q bass; and type -q python3
+    bass source "$HOME/set_proxy.sh"
+end
