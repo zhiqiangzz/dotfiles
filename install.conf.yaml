@@ -3,11 +3,15 @@
     link:
       relink: true
 
-- clean: ['~']
+- clean: ["~"]
 
 - link:
     # Shell stuff (fish)
-    ~/.config/fish/config.fish: shell/fish/config.fish
+    ~/.config/fish/config.fish:
+      path: shell/fish/config.fish
+      force: true
+      relink: true
+      create: true
     ~/.config/fish/fish_plugins: shell/fish/fish_plugins
     # Git
     ~/.gitconfig: git/.gitconfig
@@ -25,4 +29,4 @@
     ~/.vscvimrc: apps_config/.vscvimrc
 
 - shell:
-  - [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive, Installing submodules]
