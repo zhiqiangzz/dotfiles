@@ -14,11 +14,6 @@ path_append_if_dir "$HOME/.local/bin"
 # by fish; rustup also writes ~/.cargo/env.fish.
 source_if_file "$HOME/.cargo/env.fish"
 
-# Proxy server vars ($http_proxy_server / $all_proxy_server), read by `proxy`.
-# ~/set_proxy.sh is POSIX; bass_source_if_file runs it in bash via the bass plugin
-# and imports the env into fish (single source of truth, no separate fish port).
-bass_source_if_file "$HOME/set_proxy.sh"
-
 # OS- then host-specific layers, most-general to most-specific. Chained here so
 # config.fish only needs to source env/base.fish.
 source_if_file "$DOTFILES_FISH_HOME/env/os/$DOTFILES_OS.fish"

@@ -11,15 +11,6 @@ end
 
 set -gx FZF_CTRL_R_OPTS "--height 40% --reverse --border --preview 'echo {}' --preview-window=up:3:wrap"
 
-# Plugin manager (fisher) — bootstrap if missing, then it manages the plugins
-# listed in ~/.config/fish/fish_plugins. Mirrors the old Zim self-install.
-if not functions -q fisher
-    if type -q curl
-        curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
-        and fisher install jorgebucaran/fisher
-    end
-end
-
 # zoxide must init LAST (same hook-ordering constraint as the zsh setup).
 if type -q zoxide
     zoxide init --cmd cd fish | source
