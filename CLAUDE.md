@@ -20,16 +20,22 @@ The interactive shell is [**fish**](https://fishshell.com). (The previous zsh se
 
 ## Shell config architecture
 
-The fish setup is deliberately layered under `shell/fish/` so each concern is isolated and OS/host-specific code stays out of the common path. Fish reads `config.fish` for **all** shells (there is no `.zshenv`/`.zshrc` split), so environment/PATH runs unconditionally and interactive-only work is gated behind `status is-interactive`.
+The fish setup is organized as a **numbered stage model**. Fish has only two real config lifecycles — "all shells" (≈ zsh's `.zshenv`) and "interactive only" (≈ zsh's `.zshrc`); fish has **no** login/non-login split, so there is deliberately no separate "login" stage. `config.fish` is a thin orchestrator that bootstraps two variables, then sources each stage in order, gating stage 3 behind `status is-interactive`.
 
-`shell/fish/config.fish` (the only file symlinked, to `~/.config/fish/config.fish`) sources, in order:
+Each stage has a fixed charter — put new code in the stage whose charter it matches:
 
-1. `lib/guards.fish` — must load first; defines the helper vocabulary the rest of the repo depends on, plus the cached `$DOTFILES_OS` / `$DOTFILES_HOST` globals.
-2. `env/base.fish` → `env/os/$DOTFILES_OS.fish` → `env/host/$DOTFILES_HOST.fish` — environment/PATH, most-general to most-specific (all shells).
-3. `functions/guarded_commands.fish` — country-guarded command wrappers (all shells; see "Where things go").
-4. **(interactive only)** `functions/proxy.fish`, `login/base.fish`, `interactive/base.fish`, then a `proxy` call.
+| Stage | Path | Runs for | Charter (what belongs here) |
+|-------|------|----------|-----------------------------|
+| 0 | `lib/guards.fish` | all shells, **first** | Helper vocabulary + cached `$DOTFILES_OS` / `$DOTFILES_HOST`. Definitions only — no side effects, no output, no PATH/env mutation. Everything below depends on it. |
+| 1 | `env/` | all shells | Environment variables + PATH only. Idempotent, silent, no TTY assumptions, no tool inits. `base.fish` chains `os/$DOTFILES_OS.fish` → `host/$DOTFILES_HOST.fish` (general → specific). |
+| 2 | `functions/` | all shells | Function & command-wrapper **definitions** (`guarded_commands`, `proxy`, `dotenv`), sourced via the `functions/base.fish` entrypoint. Defining is cheap and side-effect-free, so it runs for all shells (guards/wrappers then apply in scripts too). **Definitions only** — startup *calls* happen in stage 3. |
+| 3 | `interactive/` | interactive only | Everything needing a TTY: tool inits (brew/fzf/zoxide/orbstack), prompt, keybindings, greeting, and startup actions (apply `proxy`, `.env` autoload). `base.fish` chains `interactive/os/$DOTFILES_OS.fish` (same base→os layering as `env/`); ordering matters (zoxide last). Absorbs the old `login/` stage. |
 
-Like the old zsh layout, only `config.fish` (and `fish_plugins`) are symlinked; the layered files are sourced by absolute path from `$DOTFILES_FISH_HOME` (`$DOTFILES_HOME/shell/fish`).
+The order is not arbitrary: stage 0 defines the vocabulary everyone uses; stage 1 sets PATH before stage 2/3 probe for commands; stage 3 is last and gated so nothing interactive leaks into scripts.
+
+`config.fish` sources exactly **four entrypoints** — `lib/guards.fish` (stage 0, a single file) and one `base.fish` per multi-file stage (`env/`, `functions/`, `interactive/`). Each `base.fish` owns the order of its own module's files; `config.fish` never enumerates a stage's inner files. Add a file to a stage by wiring it into that stage's `base.fish`, not into `config.fish`.
+
+**Why not fish's native autoload?** Fish's canonical model is: `conf.d/*.fish` auto-sourced (alphabetically, *before* `config.fish`), `functions/` autoloaded one-function-per-file by filename, `completions/` likewise. We deliberately bypass all of that and source a curated list by absolute path from `$DOTFILES_FISH_HOME` (`$DOTFILES_HOME/shell/fish`) instead, because fisher writes plugin files into `~/.config/fish/{functions,conf.d,completions}` — keeping our own config out of those dirs stops plugin churn from polluting this repo. Consequence: our `functions/*.fish` group related functions by family (e.g. `proxy.fish` holds `proxy`/`prox`/`unproxy` + `_proxychains_*` helpers) rather than following the one-function-per-file autoload naming, since we source rather than autoload. Only `config.fish` and `fish_plugins` are symlinked into `~/.config/fish`.
 
 ### Conventions (defined in `lib/guards.fish`)
 
@@ -45,21 +51,21 @@ All config files use these helpers instead of raw conditionals — match this st
 
 ### Where things go
 
-- **OS-specific** env → `env/os/{Darwin,Linux}.fish`; OS-specific interactive setup → branch on `$DOTFILES_OS` (via `switch`) in `interactive/base.fish`.
+- **OS-specific** env → `env/os/{Darwin,Linux}.fish`; OS-specific *interactive* setup → `interactive/os/$DOTFILES_OS.fish` (only `Darwin.fish` exists; Linux has none, and `source_if_file` no-ops on its absence). Both layers use the same base→os(→host) convention, so keep `switch $DOTFILES_OS` out of the `base.fish` files.
 - **Host-specific** env → `env/host/<shorthostname>.fish` (only sourced on that machine; safe to add per-machine PATH/tweaks).
-- **Functions** → fish autoloads on demand from its `functions/` path, but this repo sources specific files explicitly from `config.fish`: `functions/proxy.fish` (interactive) and `functions/guarded_commands.fish` (all shells). The custom utility functions/aliases from the zsh setup (archive/git/llvm/format/clipboard/diff/system tools, eza/bat/fd aliases) were intentionally **not** ported — see them on the `zsh-legacy` branch.
+- **Functions** → fish autoloads on demand from its `functions/` path, but this repo sources them explicitly at stage 2 (all shells) via the `functions/base.fish` entrypoint, which chains `functions/guarded_commands.fish`, `functions/proxy.fish`, `functions/dotenv.fish`. Add a new function file by wiring it into `functions/base.fish` (not `config.fish`). These are definitions only; interactive *invocations* (the startup `proxy` call, `.env` autoload) live in `interactive/base.fish`. The custom utility functions/aliases from the zsh setup (archive/git/llvm/format/clipboard/diff/system tools, eza/bat/fd aliases) were intentionally **not** ported — see them on the `zsh-legacy` branch.
 - **Country-guarded command wrappers** → `functions/guarded_commands.fish`. Each wrapper (e.g. `claude`) calls `require_country_not CN; or return 1` then `command <name> $argv`. A fish function only shadows the **bare** command name, so path invocations (`./claude`, `~/.local/bin/claude`, absolute paths) bypass the guard by design — no shell hook can block a path-based exec.
 
 ### Tool inits
 
-- Interactive inits live in `login/base.fish` (fzf) and `interactive/base.fish` (Homebrew `shellenv`, OrbStack, zoxide). **zoxide must init last** (hook ordering).
+- Interactive inits all live in stage 3: general ones (fzf, zoxide) in `interactive/base.fish`, macOS-only ones (Homebrew `shellenv`, OrbStack) in `interactive/os/Darwin.fish`. The os layer is sourced first (it extends PATH); **zoxide must init last** (hook ordering).
 - Fish provides syntax highlighting, autosuggestions, and history search natively — the zsh-users plugins that supplied those under Zim are no longer needed.
 
 ## Plugin manager (fisher)
 
-Plugins are managed by [fisher](https://github.com/jorgebucaran/fisher). The manifest lives in `shell/fish/fish_plugins` (symlinked to `~/.config/fish/fish_plugins`); `interactive/base.fish` auto-bootstraps fisher on first run if it's missing. After editing `fish_plugins`, run `fisher update`. Current plugins: `jorgebucaran/nvm.fish` (Node/`nvm`).
+Plugins are managed by [fisher](https://github.com/jorgebucaran/fisher). The manifest lives in `shell/fish/fish_plugins` (symlinked to `~/.config/fish/fish_plugins`). fisher installs its own files into `~/.config/fish/{functions,conf.d,completions}` (not this repo). After editing `fish_plugins`, run `fisher update`. Current plugins: `fisher`, `jorgebucaran/nvm.fish` (Node/`nvm`), `pure-fish/pure` (prompt), `gazorby/fish-exa` (eza aliases), `jorgebucaran/autopair.fish`, `meaningful-ooo/sponge` (history cleanup), `edc/bass` (source POSIX scripts).
 
-There is **no prompt configured** — fish uses its default. To get a powerlevel10k-style prompt, add [`IlanCosman/tide`](https://github.com/IlanCosman/tide) to `fish_plugins`, `fisher update`, then run `tide configure` (a wizard like `p10k configure`). Note: powerlevel10k itself is zsh-only and cannot run in fish. [Starship](https://starship.rs) is a cross-shell alternative (`starship init fish | source`).
+The prompt is [`pure-fish/pure`](https://github.com/pure-fish/pure) (a minimal async prompt, installed via `fish_plugins`). For a heavier powerlevel10k-style prompt, swap in [`IlanCosman/tide`](https://github.com/IlanCosman/tide) and run `tide configure` (a wizard like `p10k configure`); powerlevel10k itself is zsh-only and cannot run in fish. [Starship](https://starship.rs) is a cross-shell alternative (`starship init fish | source`).
 
 ## App configs
 

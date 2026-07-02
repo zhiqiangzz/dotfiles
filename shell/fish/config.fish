@@ -1,39 +1,40 @@
-# Fish entry point — mirrors the old .zshenv/.zshrc load order.
+# Fish entry point — the only file symlinked into ~/.config/fish (besides
+# fish_plugins). Fish reads this for ALL shells (there is no .zshenv/.zshrc
+# split), so it is a thin orchestrator: it bootstraps, then sources each stage
+# in order, gating the interactive stage behind `status is-interactive`.
 #
-# Fish reads this file for ALL shells (there is no .zshenv/.zshrc split), so
-# environment/PATH setup runs unconditionally and interactive-only work is
-# gated behind `status is-interactive`.
+# The layered files are sourced by absolute path from $DOTFILES_FISH_HOME (not
+# via fish's native conf.d/functions autoload) on purpose: fisher writes plugin
+# files into ~/.config/fish/{functions,conf.d,completions}, so keeping our own
+# config out of those dirs stops plugin churn from polluting this repo.
 #
-# Only this file and fish_plugins are symlinked into ~/.config/fish. The
-# layered files below are sourced by absolute path from $DOTFILES_FISH_HOME,
-# exactly as the zsh config sourced from $DOTFILES_SHELL_HOME.
+# Load order (see CLAUDE.md "Shell config architecture" for each stage's charter):
+#   0. lib/guards      — helper vocabulary + cached OS/HOST identity  [all shells]
+#   1. env/            — environment variables + PATH                 [all shells]
+#   2. functions/      — function & command-wrapper DEFINITIONS       [all shells]
+#   3. interactive/    — tool inits, prompt, keybindings, actions     [interactive]
 
 set -gx DOTFILES_HOME "$HOME/.config/dotfiles"
 set -gx DOTFILES_FISH_HOME "$DOTFILES_HOME/shell/fish"
 
-# guards.fish must load first: it defines the helper vocabulary
-# (source_if_file, has_cmd, run_if_cmd, path_*_if_dir) plus the cached
-# DOTFILES_OS / DOTFILES_HOST globals that the rest of the config branches on.
+# Stage 0 — must load first: defines the helpers (source_if_file, has_cmd,
+# run_if_cmd, path_*_if_dir, …) and the DOTFILES_OS/HOST globals every stage
+# below depends on. Definitions only, no side effects.
 source "$DOTFILES_FISH_HOME/lib/guards.fish"
 
-# Environment / PATH. base.fish chains in the OS- and host-specific layers.
+# Stage 1 — environment / PATH for all shells. base.fish chains os/$OS then
+# host/$HOST (general → specific). Runs before stage 2/3 so PATH is set before
+# any tool init probes for commands.
 source_if_file "$DOTFILES_FISH_HOME/env/base.fish"
 
-# Command wrappers guarded by egress country (all shells, so the guard applies
-# regardless of interactivity; the function is cheap to define and the country
-# probe only runs when a guarded command is actually invoked).
-source_if_file "$DOTFILES_FISH_HOME/functions/guarded_commands.fish"
+# Stage 2 — function & command-wrapper definitions for all shells. Defining is
+# cheap and side-effect-free; startup *calls* (proxy, dotenv autoload) happen in
+# stage 3. Kept out of the interactive gate so guards/wrappers also apply in
+# scripts and non-interactive shells. base.fish owns the order of its own files.
+source_if_file "$DOTFILES_FISH_HOME/functions/base.fish"
 
-# Interactive-only setup.
+# Stage 3 — interactive only (fish's .zshrc analog). base.fish owns its own
+# ordering (os layer → tool inits → zoxide last → startup actions).
 if status is-interactive
-    source_if_file "$DOTFILES_FISH_HOME/functions/proxy.fish"
-    source_if_file "$DOTFILES_FISH_HOME/functions/dotenv.fish"
-    source_if_file "$DOTFILES_FISH_HOME/login/base.fish"
     source_if_file "$DOTFILES_FISH_HOME/interactive/base.fish"
-    # Only apply proxy env when a config exists, so a missing config doesn't
-    # trigger the interactive "generate template?" prompt on every shell start.
-    test -f "$HOME/.config/proxychains.conf"; and proxy
-    # Load a .env in the directory the shell starts in (the PWD handler only
-    # fires on subsequent cd).
-    _dotenv_autoload
 end

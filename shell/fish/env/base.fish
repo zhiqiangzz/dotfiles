@@ -1,4 +1,6 @@
-# Cross-platform environment / PATH (port of shell/zsh/env/base.zsh).
+# Stage 1 — cross-platform environment / PATH (fish's .zshenv analog). Runs for
+# ALL shells, so keep this idempotent, silent, and free of TTY/tool-init logic.
+# base.fish chains the os/$OS then host/$HOST layers at the end.
 
 set -gx LANGUAGE en_US.UTF-8
 set -gx LC_ALL en_US.UTF-8
